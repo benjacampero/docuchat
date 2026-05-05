@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+:root {
+  /* Canvas */
+  --background: #FBFBFA;
+  --background-alt: #F7F6F3;
+  --foreground: #111111;
+  --foreground-secondary: #787774;
+
+  /* Surfaces */
+  --surface: #FFFFFF;
+  --surface-hover: #F9F9F8;
+
+  /* Borders */
+  --border: #EAEAEA;
+  --border-subtle: rgba(0, 0, 0, 0.06);
+
+  /* Accent Pastels */
+  --accent-red-bg: #FDEBEC;
+  --accent-red-text: #9F2F2D;
+  --accent-blue-bg: #E1F3FE;
+  --accent-blue-text: #1F6C9F;
+  --accent-green-bg: #EDF3EC;
+  --accent-green-text: #346538;
+  --accent-yellow-bg: #FBF3DB;
+  --accent-yellow-text: #956400;
+
+  /* Typography */
+  --font-serif: "Playfair Display", "Instrument Serif", "Newsreader", Georgia, serif;
+  --font-sans: "Geist", "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
+  --font-mono: "Geist Mono", "SF Mono", "JetBrains Mono", monospace;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-background-alt: var(--background-alt);
+  --color-foreground: var(--foreground);
+  --color-foreground-secondary: var(--foreground-secondary);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
+  --color-accent-red-bg: var(--accent-red-bg);
+  --color-accent-red-text: var(--accent-red-text);
+  --color-accent-blue-bg: var(--accent-blue-bg);
+  --color-accent-blue-text: var(--accent-blue-text);
+  --color-accent-green-bg: var(--accent-green-bg);
+  --color-accent-green-text: var(--accent-green-text);
+  --color-accent-yellow-bg: var(--accent-yellow-bg);
+  --color-accent-yellow-text: var(--accent-yellow-text);
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Editorial serif headings */
+h1, h2, h3 {
+  font-family: var(--font-serif);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--foreground-secondary);
+}
+
+/* Scroll entrance animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+/* Staggered animation delays */
+.stagger-1 { animation-delay: 80ms; }
+.stagger-2 { animation-delay: 160ms; }
+.stagger-3 { animation-delay: 240ms; }
+.stagger-4 { animation-delay: 320ms; }
+.stagger-5 { animation-delay: 400ms; }
