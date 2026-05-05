@@ -1,5 +1,3 @@
-import { getDocument } from "pdfjs-dist";
-
 export interface PageText {
   pageNumber: number;
   text: string;
@@ -8,6 +6,7 @@ export interface PageText {
 export async function extractTextFromPdf(
   pdfBuffer: ArrayBuffer
 ): Promise<PageText[]> {
+  const { getDocument } = await import("pdfjs-dist/legacy/build/pdf.mjs");
   const pdf = await getDocument({ data: pdfBuffer, useWorkerFetch: false, useSystemFonts: true }).promise;
   const pages: PageText[] = [];
 
@@ -28,6 +27,7 @@ export async function extractTextFromPdf(
 }
 
 export async function getPdfPageCount(pdfBuffer: ArrayBuffer): Promise<number> {
+  const { getDocument } = await import("pdfjs-dist/legacy/build/pdf.mjs");
   const pdf = await getDocument({ data: pdfBuffer, useWorkerFetch: false, useSystemFonts: true }).promise;
   return pdf.numPages;
 }
