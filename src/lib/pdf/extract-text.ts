@@ -1,5 +1,4 @@
-// Use the legacy build for Node.js compatibility
-import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
+import { getDocument } from "pdfjs-dist";
 
 export interface PageText {
   pageNumber: number;
