@@ -22,6 +22,7 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "DocuChat — Consulta tus documentos",
   description: "Plataforma RAG para consultar documentos con inteligencia artificial",
+  viewport: "width=device-width, initial-scale=1.0, viewport-fit=cover",
 };
 
 export default function RootLayout({

@@ -95,8 +95,8 @@ export default function DocumentsPage() {
   }
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
+    <div className="p-4 md:p-8 max-w-5xl mx-auto">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
         <h1 className="font-serif text-2xl font-semibold">Documentos</h1>
         <Button variant="secondary" onClick={fetchDocuments} size="sm">
           <ArrowsClockwise size={14} className="mr-2" />
@@ -113,7 +113,7 @@ export default function DocumentsPage() {
         <div className="space-y-2">
           {documents.map((doc) => (
             <Card key={doc.id} className="!p-4">
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col md:flex-row md:items-center gap-4">
                 <div className="w-9 h-9 rounded-lg bg-accent-blue-bg flex items-center justify-center flex-shrink-0">
                   <FileText size={16} className="text-accent-blue-text" />
                 </div>
@@ -126,7 +126,7 @@ export default function DocumentsPage() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2 md:gap-3">
                   {statusBadge(doc.status)}
 
                   {doc.status === "processing" && (
