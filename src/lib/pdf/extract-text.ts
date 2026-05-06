@@ -43,8 +43,8 @@ export async function extractTextFromPdf(
     return pages.length > 0 ? pages : [{ pageNumber: 1, text: "[Contenido del PDF]" }];
   } catch (error) {
     console.error("PDF extraction error:", error);
-    // Return fallback with generic content
-    return [{ pageNumber: 1, text: "[Documento procesado]" }];
+    // Throw error so processing fails - better to show error than fake success
+    throw new Error(`Failed to extract PDF text: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
