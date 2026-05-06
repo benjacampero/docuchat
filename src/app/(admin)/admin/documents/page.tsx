@@ -52,10 +52,19 @@ export default function DocumentsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ document_id: docId }),
       });
-      if (res.ok) {
-        // Refresh to show "processing" status, then polling takes over
-        await fetchDocuments();
+
+      if (!res.ok) {
+        const err = await res.json();
+        console.error("Process error:", err);
+        alert(`Error al procesar: ${err.error || "Error desconocido"}`);
+        return;
       }
+
+      // Refresh to show "processing" status, then polling takes over
+      await fetchDocuments();
+    } catch (error) {
+      console.error("Process request error:", error);
+      alert(`Error: ${error instanceof Error ? error.message : "Error desconocido"}`);
     } finally {
       setProcessingIds((prev) => {
         const next = new Set(prev);

@@ -24,7 +24,7 @@ export async function GET(
   // Get document to find the PDF file path
   const { data: doc } = await adminSupabase
     .from("documents")
-    .select("file_path")
+    .select("file_path, storage_bucket_id")
     .eq("id", id)
     .single();
 
@@ -48,25 +48,26 @@ export async function GET(
     });
   }
 
-  // Return a simple placeholder PNG
-  // Pre-rendering PDFs on Vercel serverless is not feasible without additional dependencies
-  const placeholderPng = createPlaceholderPng();
-  return new NextResponse(Buffer.from(placeholderPng), {
-    headers: {
-      "Content-Type": "image/png",
-      "Cache-Control": "public, max-age=3600",
-    },
-  });
-}
+  // Return signed URL for the PDF so client can render it
+  // The client (browser) will use pdfjs-dist to render the page
+  try {
+    const { data: signedUrl } = await adminSupabase.storage
+      .from("documents")
+      .createSignedUrl(doc.file_path, 3600); // 1 hour expiry
 
-function createPlaceholderPng(): Uint8Array {
-  // Minimal 1x1 white PNG
-  return new Uint8Array([
-    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
-    0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
-    0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x77, 0x53, 0xde, 0x00, 0x00, 0x00,
-    0x0c, 0x49, 0x44, 0x41, 0x54, 0x08, 0xd7, 0x63, 0xf8, 0xcf, 0xc0, 0x00,
-    0x00, 0x00, 0x03, 0x00, 0x01, 0xf5, 0x5a, 0xf6, 0x0f, 0x00, 0x00, 0x00,
-    0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82,
-  ]);
+    if (signedUrl) {
+      return NextResponse.json({
+        pdf_url: signedUrl.signedUrl,
+        page_number: page,
+      });
+    }
+  } catch (error) {
+    console.error("Failed to create signed URL:", error);
+  }
+
+  // Fallback: return error
+  return NextResponse.json(
+    { error: "Could not retrieve PDF" },
+    { status: 500 }
+  );
 }
