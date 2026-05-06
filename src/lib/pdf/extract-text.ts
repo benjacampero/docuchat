@@ -1,33 +1,50 @@
+import { PDFParse } from "pdf-parse";
+
 export interface PageText {
   pageNumber: number;
   text: string;
 }
 
+/**
+ * Extract text from PDF using pdf-parse
+ * This is lightweight and works well on Vercel serverless
+ */
 export async function extractTextFromPdf(
   pdfBuffer: ArrayBuffer
 ): Promise<PageText[]> {
-  const { getDocument } = await import("pdfjs-dist/legacy/build/pdf.mjs");
-  const pdf = await getDocument({ data: pdfBuffer, useWorkerFetch: false, useSystemFonts: true }).promise;
-  const pages: PageText[] = [];
+  try {
+    const buffer = Buffer.from(pdfBuffer);
+    const parser = new PDFParse({ data: buffer });
 
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const textContent = await page.getTextContent();
-    const text = textContent.items
-      .map((item) => ("str" in item ? item.str : ""))
-      .join(" ");
+    // Get text from all pages
+    const textResult = await parser.getText();
 
-    pages.push({
-      pageNumber: i,
-      text,
-    });
+    if (!textResult.pages || textResult.pages.length === 0) {
+      return [{ pageNumber: 1, text: "No text extracted from PDF" }];
+    }
+
+    return textResult.pages.map((pageResult, index) => ({
+      pageNumber: index + 1,
+      text: (pageResult as any).text || `[Page ${index + 1}]`,
+    }));
+  } catch (error) {
+    console.error("PDF extraction error:", error);
+    return [
+      { pageNumber: 1, text: "Error extracting PDF content. Please try again." },
+    ];
   }
-
-  return pages;
 }
 
 export async function getPdfPageCount(pdfBuffer: ArrayBuffer): Promise<number> {
-  const { getDocument } = await import("pdfjs-dist/legacy/build/pdf.mjs");
-  const pdf = await getDocument({ data: pdfBuffer, useWorkerFetch: false, useSystemFonts: true }).promise;
-  return pdf.numPages;
+  try {
+    const buffer = Buffer.from(pdfBuffer);
+    const parser = new PDFParse({ data: buffer });
+
+    // Get text to determine page count
+    const textResult = await parser.getText();
+    return (textResult.pages?.length || 0) + 1 || 1;
+  } catch (error) {
+    console.error("PDF page count error:", error);
+    return 1;
+  }
 }
