@@ -1,32 +1,40 @@
 import { getGeminiClient } from "./client";
 
 const MAX_RETRIES = 5;
+const CONCURRENCY = 10; // Run 10 requests in parallel
 
-async function batchEmbedWithRetry(texts: string[], retryCount = 0): Promise<number[][]> {
+async function embedWithRetry(text: string, retryCount = 0): Promise<number[]> {
   const genAI = getGeminiClient();
 
   try {
-    const response = await genAI.models.batchEmbedContents({
+    const response = await genAI.models.embedContent({
       model: "gemini-embedding-001",
-      requests: texts.map((text) => ({ contents: text })),
+      contents: text,
     });
-    return response.embeddings!.map((e) => e.values!);
+    return response.embeddings![0].values!;
   } catch (error: unknown) {
     const err = error as { status?: number; message?: string };
     if (err.status === 429 && retryCount < MAX_RETRIES) {
       const delay = Math.pow(2, retryCount + 2) * 1000;
       await new Promise((resolve) => setTimeout(resolve, delay));
-      return batchEmbedWithRetry(texts, retryCount + 1);
+      return embedWithRetry(text, retryCount + 1);
     }
     throw error;
   }
 }
 
 export async function generateEmbedding(text: string): Promise<number[]> {
-  const results = await batchEmbedWithRetry([text]);
-  return results[0];
+  return embedWithRetry(text);
 }
 
 export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
-  return batchEmbedWithRetry(texts);
+  const results: number[][] = [];
+
+  for (let i = 0; i < texts.length; i += CONCURRENCY) {
+    const batch = texts.slice(i, i + CONCURRENCY);
+    const batchResults = await Promise.all(batch.map((text) => embedWithRetry(text)));
+    results.push(...batchResults);
+  }
+
+  return results;
 }
