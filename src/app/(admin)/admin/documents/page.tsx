@@ -54,9 +54,15 @@ export default function DocumentsPage() {
       });
 
       if (!res.ok) {
-        const err = await res.json();
-        console.error("Process error:", err);
-        alert(`Error al procesar: ${err.error || "Error desconocido"}`);
+        let errorMsg = "Error desconocido";
+        try {
+          const err = await res.json();
+          errorMsg = err.error || errorMsg;
+        } catch {
+          errorMsg = `Error ${res.status}: ${res.statusText}`;
+        }
+        console.error("Process error:", errorMsg);
+        alert(`Error al procesar: ${errorMsg}`);
         return;
       }
 
