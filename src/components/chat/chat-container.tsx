@@ -24,9 +24,9 @@ export function ChatContainer({ messages, isLoading, onSend }: ChatContainerProp
   return (
     <div className="flex flex-col h-full">
       {/* Messages area */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 md:px-6 py-4 md:py-6">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-6">
         {messages.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center px-4">
+          <div className="h-full flex flex-col items-center justify-center text-center">
             <div className="w-16 h-16 rounded-2xl bg-background-alt flex items-center justify-center mb-5">
               <FileText size={28} className="text-foreground-secondary/60" />
             </div>

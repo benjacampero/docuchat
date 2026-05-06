@@ -12,10 +12,9 @@ import {
 
 interface SidebarProps {
   isAdmin?: boolean;
-  onNavigate?: () => void;
 }
 
-export function Sidebar({ isAdmin = false, onNavigate }: SidebarProps) {
+export function Sidebar({ isAdmin = false }: SidebarProps) {
   const pathname = usePathname();
 
   const userLinks = [
@@ -32,7 +31,7 @@ export function Sidebar({ isAdmin = false, onNavigate }: SidebarProps) {
   const links = isAdmin ? [...userLinks, ...adminLinks] : userLinks;
 
   return (
-    <aside className="w-60 border-r border-border bg-surface h-full flex flex-col pt-16 md:pt-0">
+    <aside className="hidden md:flex w-60 border-r border-border bg-surface h-full flex-col">
       <div className="p-6 border-b border-border">
         <h1 className="font-serif text-xl font-semibold tracking-tight">
           DocuChat
@@ -50,7 +49,6 @@ export function Sidebar({ isAdmin = false, onNavigate }: SidebarProps) {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  onClick={onNavigate}
                   className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors duration-150
                     ${
                       isActive

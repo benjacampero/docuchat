@@ -22,7 +22,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         {isUser ? <User size={14} weight="bold" /> : <Robot size={14} weight="bold" />}
       </div>
 
-      <div className={`flex flex-col gap-2 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-[75%] ${isUser ? "items-end" : "items-start"}`}>
+      <div className={`flex flex-col gap-2 max-w-[75%] ${isUser ? "items-end" : "items-start"}`}>
         <div
           className={`px-4 py-3 rounded-xl text-sm leading-relaxed
             ${
