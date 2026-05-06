@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { processDocument } from "@/lib/pdf/pipeline";
 
-export const maxDuration = 300; // 5 minutes max for serverless
+export const maxDuration = 300;
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
