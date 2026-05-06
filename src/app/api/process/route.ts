@@ -35,11 +35,12 @@ export async function POST(request: NextRequest) {
     .update({ status: "processing", error_message: null })
     .eq("id", document_id);
 
-  // Run processing without awaiting — let it run in background
-  // The pipeline handles its own error states in the DB
-  processDocument(document_id, supabase).catch(() => {
-    // Error already saved to DB by processDocument
-  });
+  // Await processing so Vercel doesn't kill the function before it finishes
+  const result = await processDocument(document_id, supabase);
 
-  return NextResponse.json({ success: true, message: "Processing started" });
+  if (!result.success) {
+    return NextResponse.json({ error: result.error }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true, message: "Processing complete", ...result });
 }
