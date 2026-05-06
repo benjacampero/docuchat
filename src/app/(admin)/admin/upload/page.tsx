@@ -11,7 +11,6 @@ export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [processing, setProcessing] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [dragOver, setDragOver] = useState(false);
@@ -60,19 +59,6 @@ export default function UploadPage() {
 
       const { document } = await uploadRes.json();
       setUploading(false);
-      setProcessing(true);
-
-      // Trigger processing
-      const processRes = await fetch("/api/process", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ document_id: document.id }),
-      });
-
-      if (!processRes.ok) {
-        const err = await processRes.json();
-        throw new Error(err.error || "Processing failed");
-      }
 
       setStatus("success");
       setTimeout(() => router.push("/admin/documents"), 2000);
@@ -81,7 +67,6 @@ export default function UploadPage() {
       setErrorMsg(error instanceof Error ? error.message : "Error desconocido");
     } finally {
       setUploading(false);
-      setProcessing(false);
     }
   }
 
@@ -147,14 +132,10 @@ export default function UploadPage() {
           <div className="mt-5">
             <Button
               onClick={handleUpload}
-              disabled={uploading || processing}
+              disabled={uploading}
               className="w-full"
             >
-              {uploading
-                ? "Subiendo..."
-                : processing
-                ? "Procesando documento..."
-                : "Subir y procesar"}
+              {uploading ? "Subiendo..." : "Subir documento"}
             </Button>
           </div>
         )}
@@ -163,7 +144,7 @@ export default function UploadPage() {
         {status === "success" && (
           <div className="mt-4 flex items-center gap-2 text-accent-green-text text-sm">
             <CheckCircle size={18} weight="fill" />
-            Documento procesado correctamente. Redirigiendo...
+            Documento subido. Ve a Documentos para procesarlo. Redirigiendo...
           </div>
         )}
 
